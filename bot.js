@@ -47,7 +47,7 @@ var testChannel = keys.botTestChannel;
 
 var annChannel = bot.channels.cache.get(namChannel);
 
-console.log('JUDGEMENT v1.9.2');
+console.log('JUDGEMENT v1.9.3');
 
 bot.on('message', (message) => {
     //Recording username for easier logging
@@ -163,7 +163,7 @@ bot.on('message', (message) => {
 
                 //5% chance Judgement will become DIO instead of answering the question
                 var dioRNG = Math.floor(Math.random() * 100);
-                console.log('DIO RNG: ' + rand);
+                console.log('DIO RNG: ' + dioRNG);
                 if (dioRNG < 5) { 
                     console.log("DIO Activated!")
                     message.channel.send('You thought you would get an answer, but it was me, DIO!');
