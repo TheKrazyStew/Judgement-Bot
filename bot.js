@@ -20,34 +20,47 @@ const twitch = new TwitchAPI({
 });
 
 //Responses for the 8-Ball Command
+/*
+    Positive Responses - 7
+    Negative Responses - 7
+    Non-committal Responses - 6 + DIO
+    Total - 20 responses + DIO
+*/
 var answerBank = [
-    "Yes",
-    "No",
-    "Definitely",
-    "Definitely Not",
+    "Yes.",
+    "No.",
+    "Definitely.",
+    "Definitely Not.",
     "Why would you ask me that, you sicko?!",
-    "Maybe",
-    "I am unsure",
-    "This does not compute",
+    "Maybe...",
+    "I am unsure.",
+    "Most likely.",
+    "Not very likely...",
+    "This does not compute.",
     "All signs point to yes.",
-    "Don't count on it."
+    "Don't count on it.",
+    "Your outlook seems good.",
+    "Your outlook seems... not so good.",
+    "I seriously doubt it.",
+    "My uncle who works at Nintendo says no.",
+    "My uncle who works at Nintendo says yes.",
+    "It is practically written in stone!",
+    "Actually, I better not say yet.",
+    "All of our lines are busy at the moment. Please hold for the next available line. https://www.youtube.com/watch?v=VBlFHuCzPgY"
 ];
 
 var username;
 
 //Booleans used by the Twitch function
-let tksIsLive = false,
-    namIsLive = false,
-    priceIsLive = false,
-    varriczIsLive = false;
+/*
+    [tksIsLive, namIsLive, priceIsLive, default (formerly Varricz)]
+*/
+var isLive = 
+    [false,false,false,false];
 
 //Nam's discord channel ID to announce streams in
 var namChannel = keys.twitchDisChannel;
 var testChannel = keys.botTestChannel;
-
-var annChannel = bot.channels.cache.get(namChannel);
-
-console.log('JUDGEMENT v1.9.3');
 
 bot.on('message', (message) => {
     //Recording username for easier logging
@@ -146,7 +159,8 @@ bot.on('message', (message) => {
 
             var ans = zeroBank[Math.floor(Math.random() * zeroBank.length)];
             message.channel.send(ans);
-        } if (list[i].localeCompare("mf") == 0 && list[i+1].localeCompare("doom") == 0) {
+        } if (list[i].localeCompare("mf") == 0 &&
+            list[i+1].localeCompare("doom") == 0) {
 
             message.channel.send("MF DOOM");
 
@@ -172,97 +186,71 @@ bot.on('message', (message) => {
                 } else { 
                     var ans = answerBank[Math.floor(Math.random() * answerBank.length)];
                     console.log("ANS: " + ans);
-                    message.channel.send('Hail 2 U! Your answer is: ' + ans);
+                    message.channel.send(/*'Hail 2 U! Your answer is: ' + */ans);
                 }
                 break;
             }
+            break;
+        default:
+            break;
     }
 });
 
 //Twitch - Search for channels going live and announce them
-const run = async function Run() {
 
-    //TKS Streams
-    await twitch.getStreams({ channel: "thekrazystew" }).then(async data => {
+async function streamGetter(name) {
+    var nick;
+    var i;
+    switch(name.toLowerCase()) {
+        case "thekrazystew":
+            nick = "TKS";
+            i = 0;
+            break;
+        case "namtaskic":
+            nick = "Nam";
+            i = 1;
+            break;
+        case "pricecrazy62":
+            nick = "Price";
+            i = 2;
+            break;
+        default:
+            nick = name;
+            i = 3;
+    }
+
+    await twitch.getStreams({ channel: name }).then(async data => {
         const r = data.data[0];
 
         if(r !== undefined) {
             if(r.type === "live") {
-                if(!tksIsLive || tksIsLive === undefined) {
-                    tksIsLive = true;
-                    annChannel.send("Hey, @everyone! TheKrazyStew is streaming now! Check it out at https://twitch.tv/thekrazystew");
-                    console.log('new stream detected from TKS');
+                if(!isLive[i] || isLive[i] === undefined) {
+                    isLive[i] = true;
+                    annChannel.send("Hey, @everyone! " + nick + " is streaming now! Check it out at https://twitch.tv/" + name);
+                    console.log('new stream detected from ' + nick);
                 }
             }
         } else {
-            if(tksIsLive) {
-                tksIsLive = false;
-                console.log('TKS is no longer live');
+            if(isLive[i]) {
+                isLive[i] = false;
+                console.log(nick + ' is no longer live');
             }
         }
-    })
-
-    //Nam Streams
-    await twitch.getStreams({ channel: "namtaskic" }).then(async data => {
-        const r = data.data[0];
-
-        if(r !== undefined) {
-            if(r.type === "live") {
-                if(!namIsLive || namIsLive === undefined) {
-                    namIsLive = true;
-                    annChannel.send("Hey, @everyone! Nam is streaming now! Check it out at https://twitch.tv/namtaskic");
-                    console.log('new stream detected from Nam');
-                }
-            }
-        } else {
-            if(namIsLive) {
-                namIsLive = false;
-                console.log('Nam is no longer live');
-            }
-        }
-    })
-
-    //Price Streams
-    await twitch.getStreams({ channel: "pricecrazy62" }).then(async data => {
-        const r = data.data[0];
-
-        if(r !== undefined) {
-            if(r.type === "live") {
-                if(!priceIsLive || priceIsLive === undefined) {
-                    priceIsLive = true;
-                    annChannel.send("Hey, @everyone! PriceCrazy is streaming now! Check it out at https://twitch.tv/pricecrazy62");
-                    console.log('new stream detected from Price');
-                }
-            }
-        } else {
-            if(priceIsLive) {
-                priceIsLive = false;
-                console.log('Price is no longer live');
-            }
-        }
-    })
-
-    //Varricz Streams
-    await twitch.getStreams({ channel: "varricz" }).then(async data => {
-        const r = data.data[0];
-
-        if(r !== undefined) {
-            if(r.type === "live") {
-                if(!varriczIsLive || varriczIsLive === undefined) {
-                    varriczIsLive = true;
-                    annChannel.send("Hey, @everyone! Varricz is streaming now! Check him out at https://twitch.tv/varricz");
-                    console.log('new stream detected from varricz');
-                }
-            }
-        } else {
-            if(varriczIsLive) {
-                varriczIsLive = false;
-                console.log('varricz is no longer live');
-            }
-        }
-    })
+    });
 }
-setInterval(run,5000);
+
+const run = async function Run() {
+    streamGetter("TheKrazyStew");
+    streamGetter("Namtaskic");
+    streamGetter("Pricecrazy62");
+}
 
 //Log in the bot
 bot.login(keys.discordToken); 
+
+//Bot is ready
+bot.on('ready', () => {
+    annChannel = bot.channels.cache.get(namChannel);
+    console.log('JUDGEMENT v1.9.4');
+    setInterval(run,5000);
+});
