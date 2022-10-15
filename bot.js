@@ -2,6 +2,7 @@
  * JUDGEMENT
  * 
  * Author: Kevin "Krazy-Stew" Stewart
+ * 
  */
 
 //Variable initialization
@@ -48,11 +49,17 @@ var answerBank = [
     "All of our lines are busy at the moment. Please hold for the next available line. https://www.youtube.com/watch?v=VBlFHuCzPgY"
 ];
 
-var username;
+var basedBank = [
+    "Cheems? Doge?",
+    "A true story?",
+    "Facts and logic?",
+    "On eyewitness accounts?",
+    "On indisputable evidence?"
+];
 
 //Booleans used by the Twitch function
 /*
-    [tksIsLive, namIsLive, priceIsLive, default (formerly Varricz)]
+    [tksIsLive, namIsLive, priceIsLive, ehckIsLive]
 */
 var isLive = 
     [false,false,false,false];
@@ -63,18 +70,34 @@ var testChannel = keys.botTestChannel;
 
 bot.on('message', (message) => {
     //Recording username for easier logging
-    username = "" +
-    message.member.user.tag +
-    " (" +
-    message.member.nickname +
-    ")";
+    var username = "" +
+        message.member.user.tag +
+        " (" +
+        message.member.nickname +
+        ", " + message.member.user.username +
+        ")";
 
+    //This is the name that will be used in responses if the need arises
+    var trigName = (message.member.nickname != null) 
+        ? message.member.nickname 
+        : message.member.user.username;
     //Don't respond to a message if it's from a bot - either another bot or itself
     if (message.author.bot) return; 
 
-    //Making the message interpretable by the bot
+    //Making the message interpretable by the bot, word by word
     var lcase = message.content.toLowerCase(); 
-    var list = lcase.split(" ");
+    var list = lcase.split(" ")
+        .split(".")
+        .split(",")
+        .split(">")
+        .split("<")
+        .split("?")
+        .split("!")
+        .split("~")
+        .split("_")
+        .split("-")
+        .split("=")
+        .split("*");
 
     //Easter Eggs
     for (var i = 0; i < list.length; i++) {
@@ -82,7 +105,7 @@ bot.on('message', (message) => {
             if (lcase.includes("thanks" || lcase.includes("thank"))) {
                 message.channel.send("You're welcome.");
             } else if(lcase.includes("based")){
-                message.channel.send("Based on what? Cheems? Doge?");
+                message.channel.send("Based on what? " + randFromList(basedBank));
             } else {
                 message.channel.send("You rang?");
             }
@@ -90,6 +113,7 @@ bot.on('message', (message) => {
             if (!lcase.includes(":")) { //excludes emotes with either word in their names
                 message.channel.send("Ah yes, Nam... my favorite server overlord.");
             }
+
         } if (list[i].localeCompare("turtle") == 0) {
             message.channel.send("hoi tortal");
 
@@ -112,34 +136,33 @@ bot.on('message', (message) => {
                 "Your nightmare begins here.",
                 "Let's have some fun.",
                 "My power shall be absolute!",
-                "I won't lose to the likes of you... " + message.member.nickname + ".",
+                "I won't lose to the likes of you... " + trigName + ".",
                 "Foolishness....is rushing in blind all you can do?",
-                "Admit it, " + message.member.nickname + ". I'm just better than you.",
-                "Unfortunately, our souls are at odds, " + message.member.nickname + ". I need more power!"
+                "Admit it, " + trigName + ". I'm just better than you.",
+                "Unfortunately, our souls are at odds, " + trigName + ". I need more power!"
             ];
 
-            var ans = vergilBank[Math.floor(Math.random() * vergilBank.length)];
-            message.channel.send(ans);
+            message.channel.send(randFromList(vergilBank));
 
         } if (list[i].localeCompare("knack") == 0) {
             message.channel.send("Still waiting for Knack 3, Sony... make it happen.");
 
-        } if (list[i].localeCompare("kingdom") == 0 && list[i+1].localeCompare("hearts") == 0) {
+        } if (list[i].localeCompare("kingdom") == 0 &&
+            list[i+1].localeCompare("hearts") == 0) {
             var heartsBank = [
-                message.member.nickname + "! It's Sephiroth!",
+                trigName + "! It's Sephiroth!",
                 "That was undeniable proof that we totally owned you lamers.",
                 "They'll pay for this.",
                 "Ohh, NOW I've got it! *&&X% means \"heart.\"",
-                message.member.nickname + "... who else will I have ice cream with?",
-                "Mickey! It's " + message.member.nickname + ". They put bugs in them!",
+                trigName + "... who else will I have ice cream with?",
+                "Mickey! It's " + trigName + ". They put bugs in them!",
                 "I'm looking for somebody. Have any of you seen a guy with spiky hair?",
                 "GET UP ON THE HYDRA'S BACK!",
                 "Ah ha ha ha ha ha ha ha ha... Ha ha ha ha ha... I'm a fool.",
                 "Aww... I don't understand what's going on..."
             ];
 
-        var ans = heartsBank[Math.floor(Math.random() * heartsBank.length)];
-        message.channel.send(ans);
+            message.channel.send(randFromList(heartsBank));
 
         } if (list[i].localeCompare("door") == 0 &&
             list[i+1].localeCompare("to") == 0 &&
@@ -151,13 +174,13 @@ bot.on('message', (message) => {
 
             var zeroBank = [
                 "If the Sky Lagoon falls it will be disastrous! There's no time... I'm going down!",
-                message.member.nickname + ", I have a question for you. ... Did your unit attack this place?",
+                trigName + ", I have a question for you. ... Did your unit attack this place?",
                 "This is a matter of personal pride now. There's no avoiding this... I must go.",
                 "Nooo!! This isn't happening!! There's no reason for me to go on! What... What am I fighting for?!"
             ];
 
-            var ans = zeroBank[Math.floor(Math.random() * zeroBank.length)];
-            message.channel.send(ans);
+            message.channel.send(randFromList(zeroBank));
+
         } if (list[i].localeCompare("mf") == 0 &&
             list[i+1].localeCompare("doom") == 0) {
 
@@ -183,7 +206,7 @@ bot.on('message', (message) => {
 
                 //Otherwise, make a response
                 } else { 
-                    var ans = answerBank[Math.floor(Math.random() * answerBank.length)];
+                    var ans = randFromList(answerBank);
                     console.log("ANS: " + ans);
                     message.channel.send(/*'Hail 2 U! Your answer is: ' + */ans);
                 }
@@ -213,9 +236,13 @@ async function streamGetter(name) {
             nick = "Price";
             i = 2;
             break;
+        case "ehckgaming":
+            nick = "Trevor";
+            i = 3;
+            break;
         default:
             nick = name;
-            i = 3;
+            i = 0;
     }
 
     await twitch.getStreams({ channel: name }).then(async data => {
@@ -242,14 +269,18 @@ const run = async function Run() {
     streamGetter("TheKrazyStew");
     streamGetter("Namtaskic");
     streamGetter("Pricecrazy62");
+    streamGetter("ehckgaming");
 }
 
+function randFromList(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
 //Log in the bot
 bot.login(keys.discordToken); 
 
 //Bot is ready
 bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namChannel);
-    console.log('JUDGEMENT v1.9.4');
-    setInterval(run,5000);
+    console.log('JUDGEMENT v1.9.5');
+    setInterval(run,120000);
 });
