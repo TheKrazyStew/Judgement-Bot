@@ -10,7 +10,6 @@ const Discord = require("discord.js");
 const TwitchAPI = require("node-twitch").default;
 const {keys} = require("./discord-keys.js");
 
-
 const bot = new Discord.Client();
 
 //Twitch API Integration

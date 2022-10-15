@@ -1,2 +1,6 @@
-
-discord-keys.js
+*
+!.git
+!bot.js
+!.gitattributes
+!.gitignore
+!README.md
