@@ -75,3 +75,8 @@
 - Added more possible responses to being called based, using content borrowed from sibling bot Keith-Kazooie.
 
 - Made a single RNG function to make code more readable.
+
+## v1.9.6
+**Publish date: October 15th, 2022**
+
+- New implementation for the check to ignore punctuation, the old way crashed Judgement.

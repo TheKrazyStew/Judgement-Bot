@@ -86,22 +86,11 @@ bot.on('message', (message) => {
 
     //Making the message interpretable by the bot, word by word
     var lcase = message.content.toLowerCase(); 
-    var list = lcase.split(" ")
-        .split(".")
-        .split(",")
-        .split(">")
-        .split("<")
-        .split("?")
-        .split("!")
-        .split("~")
-        .split("_")
-        .split("-")
-        .split("=")
-        .split("*");
+    var list = lcase.split(" ");
 
     //Easter Eggs
     for (var i = 0; i < list.length; i++) {
-        if (list[i].localeCompare("judgement") == 0) {
+        if (list[i].includes("judgement")) {
             if (lcase.includes("thanks" || lcase.includes("thank"))) {
                 message.channel.send("You're welcome.");
             } else if(lcase.includes("based")){
@@ -109,21 +98,22 @@ bot.on('message', (message) => {
             } else {
                 message.channel.send("You rang?");
             }
-        } if (list[i].localeCompare("nam") == 0 || list[i].localeCompare("namtaskic") == 0) {
+        } if (list[i].includes("nam") ||
+            list[i].includes("namtaskic")) {
             if (!lcase.includes(":")) { //excludes emotes with either word in their names
                 message.channel.send("Ah yes, Nam... my favorite server overlord.");
             }
 
-        } if (list[i].localeCompare("turtle") == 0) {
+        } if (list[i].includes("turtle")) {
             message.channel.send("hoi tortal");
 
-        } if (list[i].localeCompare("salmon") == 0) {
+        } if (list[i].includes("salmon")) {
             message.channel.send("more like... salmon in a bucket");
 
-        } if (list[i].localeCompare("power") == 0) {
+        } if (list[i].includes("power")) {
             message.channel.send("UNLIMITED POWER!!");
 
-        } if (list[i].localeCompare("vergil") == 0) {
+        } if (list[i].includes("vergil")) {
             var vergilBank = [
                 "nam ples play dee em see too",
                 "I need more power...",
@@ -144,11 +134,11 @@ bot.on('message', (message) => {
 
             message.channel.send(randFromList(vergilBank));
 
-        } if (list[i].localeCompare("knack") == 0) {
+        } if (list[i].includes("knack")) {
             message.channel.send("Still waiting for Knack 3, Sony... make it happen.");
 
-        } if (list[i].localeCompare("kingdom") == 0 &&
-            list[i+1].localeCompare("hearts") == 0) {
+        } if (list[i].includes("kingdom") &&
+            list[i+1].includes("hearts")) {
             var heartsBank = [
                 trigName + "! It's Sephiroth!",
                 "That was undeniable proof that we totally owned you lamers.",
@@ -164,13 +154,13 @@ bot.on('message', (message) => {
 
             message.channel.send(randFromList(heartsBank));
 
-        } if (list[i].localeCompare("door") == 0 &&
-            list[i+1].localeCompare("to") == 0 &&
-            list[i+2].localeCompare("darkness") == 0) {
+        } if (list[i].includes("door") &&
+            list[i+1].includes("to") &&
+            list[i+2].includes("darkness") ) {
 
             message.channel.send("Say, fellas, did somebody mention the Door to Darkness?");
 
-        } if (list[i].localeCompare("zero") == 0) {
+        } if (list[i].includes("zero") ) {
 
             var zeroBank = [
                 "If the Sky Lagoon falls it will be disastrous! There's no time... I'm going down!",
@@ -181,8 +171,8 @@ bot.on('message', (message) => {
 
             message.channel.send(randFromList(zeroBank));
 
-        } if (list[i].localeCompare("mf") == 0 &&
-            list[i+1].localeCompare("doom") == 0) {
+        } if (list[i].includes("mf") &&
+            list[i+1].includes("doom")) {
 
             message.channel.send("MF DOOM");
 
@@ -281,6 +271,6 @@ bot.login(keys.discordToken);
 //Bot is ready
 bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namChannel);
-    console.log('JUDGEMENT v1.9.5');
+    console.log('JUDGEMENT v1.9.6');
     setInterval(run,120000);
 });
