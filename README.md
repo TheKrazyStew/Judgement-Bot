@@ -80,3 +80,16 @@
 **Publish date: October 15th, 2022**
 
 - New implementation for the check to ignore punctuation, the old way crashed Judgement.
+
+## v1.10.0
+**Publish date: October 31st, 2022**
+
+- Judgement can now roll dice; up to 50 at once.
+
+- Judgement now has access to Twitter, and posts links to tweets from users he follows.
+
+- Removed Pricecrazy62 from the list of streamers per request of the server owner.
+
+- Altered comments for better documentation.
+
+- Twitch errors now take significantly less space in the console log.

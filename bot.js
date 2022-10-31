@@ -5,11 +5,15 @@
  * 
  */
 
-//Variable initialization
+//Imports
 
 const Discord = require("discord.js");
 const TwitchAPI = require("node-twitch").default;
+const Twit = require('twitter-v2');
+const api = require("twitter-api-sdk");
+const needle = require('needle');
 const {keys} = require("./discord-keys.js");
+
 
 const bot = new Discord.Client();
 
@@ -19,12 +23,25 @@ const twitch = new TwitchAPI({
     client_secret: keys.twitchSecret,
 });
 
-//Responses for the 8-Ball Command
-/*
+//Twitter API Integration
+const T = new Twit({
+
+    /*consumer_key: keys.twitterAPIKey,
+    consumer_secret: keys.twitterAPISecret,
+    access_token_key: keys.twitterAccessToken,
+    access_token_secret: keys.twitterAccessSecret,*/
+    bearer_token: keys.twitterBearerToken,
+
+});
+const cli = new api.Client(keys.twitterBearerToken);
+
+/*** Variables ***/
+
+/* Responses for the 8-Ball Command
     Positive Responses - 7
     Negative Responses - 7
-    Non-committal Responses - 6 + DIO
-    Total - 20 responses + DIO
+    Non-committal Responses - 6, not counting DIO
+    Total - 20 responses, not counting DIO
 */
 var answerBank = [
     "Yes.",
@@ -57,17 +74,30 @@ var basedBank = [
     "On indisputable evidence?"
 ];
 
-//Booleans used by the Twitch function
-/*
-    [tksIsLive, namIsLive, priceIsLive, ehckIsLive]
+/* Booleans used by the Twitch function
+    [tksIsLive, namIsLive, [unused], ehckIsLive]
 */
 var isLive = 
     [false,false,false,false];
 
-//Nam's discord channel ID to announce streams in
-var namChannel = keys.twitchDisChannel;
-var testChannel = keys.botTestChannel;
+/*Channel IDs
+    namTwitchChannel - Nam's discord channel ID
+        to announce streams in
+    namWarioChannel - Nam's discord channel ID
+        to repost Wario64 tweets in
+    testChannel - should be unused
+*/
+var namTwitchID = keys.namTwitchChannel;
+var namWarioID = keys.namTwitterChannel;
+var testID = keys.botTestChannel;
 
+/*** Functions ***/
+
+/*Discord
+    Automatic procedure for Judgement
+    to respond to messages within
+    discord servers he is in
+*/
 bot.on('message', (message) => {
     //Recording username for easier logging
     var username = "" +
@@ -177,39 +207,78 @@ bot.on('message', (message) => {
             message.channel.send("MF DOOM");
 
         }
-
     }
-//8-Ball Command
+
+//Commands
     switch (message.content.substring(0, 1)) { 
         case '~': 
-            //Ignore message if the second character in the message is also '~'
-            //Two ~s in a row is used for strikethrough text by Discord
-            if (message.content.substring(1, 2) != '~') { 
-                console.log('8-ball triggered by ' + username);
+            switch(message.content.split(" ")[0]) {
+                case '~roll':
+                    //Dice rolling
+                    //~roll [dice count] [sides]
+                    //~roll [dice count]d[sides]
+                    var diceLog = message.content.split(" ")
+                    .join("d")
+                    .split("d");
+                    console.log(diceLog);
+                    var i;
+                    var rolls = new Array();
+                    var diceTotal = 0;
+                    if(diceLog[1] > 50) {
+                        message.channel.send("I don't have that many dice.");
+                        break;
+                    }
+                    for(i = 0; i < diceLog[1]; i++){
+                        var die = roll(diceLog[2]);
+                        rolls.push(die);
+                        diceTotal += die;
+                    }
+                    message.channel.send("You rolled " + diceTotal + " in total. Your dice came up as " + rolls + ".");
 
-                //5% chance Judgement will become DIO instead of answering the question
-                var dioRNG = Math.floor(Math.random() * 100);
-                console.log('DIO RNG: ' + dioRNG);
-                if (dioRNG < 5) { 
-                    console.log("DIO Activated!")
-                    message.channel.send('You thought you would get an answer, but it was me, DIO!');
+                    break;
+                default:
+                    //8-ball
+                    //Ignore message if the second character in the message is also '~'
+                    //Two ~s in a row is used for strikethrough text by Discord
+                    if (message.content.substring(1, 2) != '~') { 
+                        console.log('8-ball triggered by ' + username);
 
-                //Otherwise, make a response
-                } else { 
-                    var ans = randFromList(answerBank);
-                    console.log("ANS: " + ans);
-                    message.channel.send(/*'Hail 2 U! Your answer is: ' + */ans);
+                        //5% chance Judgement will become DIO instead of answering the question
+                        var dioRNG = Math.floor(Math.random() * 100);
+                        console.log('DIO RNG: ' + dioRNG);
+                        if (dioRNG < 5) { 
+                            console.log("DIO Activated!");
+                            message.channel.send('You thought you would get an answer, but it was me, DIO!');
+
+                        //Otherwise, make a response
+                        } else { 
+                            var ans = randFromList(answerBank);
+                            console.log("ANS: " + ans);
+                            message.channel.send(/*'Hail 2 U! Your answer is: ' + */ans);
+                        }
+                        break;
+                    }
                 }
-                break;
-            }
-            break;
-        default:
-            break;
     }
 });
 
-//Twitch - Search for channels going live and announce them
+/*Discord
+    Rolling dice
+*/
+function roll(sides) {
+    return Math.ceil(Math.random() * sides);
+}
+/*Discord
+    Returns a randomly selected element
+    from the inputted list
+*/
+function randFromList(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
 
+/*Twitch
+    Search for channels going live and announce them
+*/
 async function streamGetter(name) {
     var nick;
     var i;
@@ -222,7 +291,7 @@ async function streamGetter(name) {
             nick = "Nam";
             i = 1;
             break;
-        case "pricecrazy62":
+        case "pricecrazy62": //UNUSED; may replace later
             nick = "Price";
             i = 2;
             break;
@@ -231,46 +300,160 @@ async function streamGetter(name) {
             i = 3;
             break;
         default:
-            nick = name;
-            i = 0;
+            console.log(name + " not a valid streamer");
+            return;
     }
 
-    await twitch.getStreams({ channel: name }).then(async data => {
-        const r = data.data[0];
+    try {
+        await twitch.getStreams({ channel: name }).then(async data => {
+            const r = data.data[0];
 
-        if(r !== undefined) {
-            if(r.type === "live") {
-                if(!isLive[i] || isLive[i] === undefined) {
-                    isLive[i] = true;
-                    annChannel.send("Hey, @everyone! " + nick + " is streaming now! Check it out at https://twitch.tv/" + name);
-                    console.log('new stream detected from ' + nick);
+            if(r !== undefined) {
+                if(r.type === "live") {
+                    if(!isLive[i] || isLive[i] === undefined) {
+                        isLive[i] = true;
+                        annChannel.send("Hey, @everyone! " + nick + " is streaming now! Check it out at https://twitch.tv/" + name);
+                        console.log('new stream detected from ' + nick);
+                    }
+                }
+            } else {
+                if(isLive[i]) {
+                    isLive[i] = false;
+                    console.log(nick + ' is no longer live');
                 }
             }
-        } else {
-            if(isLive[i]) {
-                isLive[i] = false;
-                console.log(nick + ' is no longer live');
-            }
-        }
-    });
+        });
+    } catch(e) {
+        console.log("Error obtaining stream data for " + name + ". Will try again later");
+    }
 }
 
-const run = async function Run() {
+/*Twitch
+    The timed function to search for selected streamers
+*/
+const twitchRun = async function twitchRun() {
     streamGetter("TheKrazyStew");
     streamGetter("Namtaskic");
-    streamGetter("Pricecrazy62");
+    //streamGetter("");
     streamGetter("ehckgaming");
 }
 
-function randFromList(list) {
-    return list[Math.floor(Math.random() * list.length)];
+
+/*Twitter
+
+*/
+async function warioPass(str) {
 }
+
+/*Twitter
+    Send a given tweet to the given channel
+*/
+async function sendTweet(tweet, chan) {
+    var url = "https://twitter.com/i/status/" + tweet.id;
+    try{
+        var keys = ['Nintendo', 'NSW', 'Xbox', 'XBL', 'Steam',
+        'Epic Games Store', 'EGS', 'Playstation', 'PSN',
+        'Amazon', 'Gamestop', 'PS5', 'PS4', 'GOG',
+        'for a chance to win', 'Switch', 'eShop',
+        'XSX', 'XBO'];
+        var i;
+        for(i = 0; i < keys.length; i++) {
+            if(tweet.text.toLowerCase().includes(keys[i].toLowerCase())) {
+                chan.send(url);
+                return 0;
+            }
+        }
+    } catch (e) {
+        console.log("Error posting about tweet");
+        console.error(e);
+    }
+}
+
+/*Twitter
+    Reconnect to the Twitter stream
+    if it accidentally disconnects
+*/
+async function twitConnect(streamFactory, dataConsumer) {
+    try {
+        for await(const {data} of streamFactory()) {
+            dataConsumer(data);
+        }
+        //Disconnected by Twitter
+        console.log("Disconnected by Twitter. Retrying...");
+        twitConnect(streamFactory, dataConsumer);
+    } catch (e) {
+        //Disconnected by error
+        console.log("An error occurred fetching tweets. Retrying...");
+        twitConnect(streamFactory, dataConsumer);
+    }
+}
+
+/*Twitter
+    Setting up tweet stream; will find and post any tweets fitting established rules
+*   WARIO64 RULES:
+        - from Wario64
+        - tweet includes at least one of many key words/phrases defined below
+*/
+async function runTweets() {
+    const endpoints = {
+        'tweet.fields': ['author_id', 'conversation_id'],
+        'expansions': ['author_id', 'referenced_tweets.id'],
+        'media.fields': ['url'],
+    }
+
+    //Get current rules
+    const rulesURL = 'https://api.twitter.com/2/tweets/search/stream/rules';
+    var response = await needle('get', rulesURL, {
+        headers: {
+            'authorization': `Bearer ${keys.twitterBearerToken}`
+        }
+    });
+    console.log(response.body);
+    rules1 = response.body;
+    //Delete current rules
+    const ids = rules1.data.map(rule => rule.id);
+    const data = {
+        "delete": {
+            "ids": ids
+        }
+    }
+    response = await needle('post', rulesURL, data, {
+        headers: {
+            'content-type': 'application/json',
+            'authorization': `Bearer ${keys.twitterBearerToken}`
+        }
+    });
+
+    try {
+        const rules = {
+            'add': [
+                //{'value': "from:TheKrazyStew", "tag":"from tks"},
+                {'value': "from:Wario64", "tag":"from wario"}
+            ]
+        }
+        const r = await T.post("tweets/search/stream/rules", rules);
+        console.log(r);
+    } catch (e) {
+        console.log(e);
+    }
+
+    twitConnect(
+        () => T.stream('tweets/search/stream', endpoints),
+        (data) => sendTweet (data, warioChannel),
+    );
+}
+
+/*** Startup ***/
+
 //Log in the bot
 bot.login(keys.discordToken); 
 
 //Bot is ready
 bot.on('ready', () => {
-    annChannel = bot.channels.cache.get(namChannel);
-    console.log('JUDGEMENT v1.9.6');
-    setInterval(run,120000);
+    annChannel = bot.channels.cache.get(namTwitchID);
+    testChannel = bot.channels.cache.get(testID);
+    warioChannel = bot.channels.cache.get(namWarioID);
+    console.log('JUDGEMENT v1.10.0');
+    setInterval(twitchRun,120000); //Twitch run timer: 2 minutes
+    runTweets();
 });
