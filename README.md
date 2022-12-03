@@ -93,3 +93,16 @@
 - Altered comments for better documentation.
 
 - Twitch errors now take significantly less space in the console log.
+
+## v1.10.1
+**Publish date: December 3rd, 2022**
+
+- Removed unused function.
+
+- Added integrity check to the roll function; it now makes sure you're putting actually putting numbers into the command.
+
+- Prettied up the code in needed areas.
+
+- Added amiibo to the Wario tweet filter list.
+
+- Added catch for Judgement rarely crashing trying to generate an easter egg response for some messages.

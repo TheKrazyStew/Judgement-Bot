@@ -119,6 +119,7 @@ bot.on('message', (message) => {
     var list = lcase.split(" ");
 
     //Easter Eggs
+    try {
     for (var i = 0; i < list.length; i++) {
         if (list[i].includes("judgement")) {
             if (lcase.includes("thanks" || lcase.includes("thank"))) {
@@ -208,6 +209,9 @@ bot.on('message', (message) => {
 
         }
     }
+    } catch (e) {
+        console.log("Error finding easter eggs for message: " + message.content);
+    }
 
 //Commands
     switch (message.content.substring(0, 1)) { 
@@ -224,6 +228,16 @@ bot.on('message', (message) => {
                     var i;
                     var rolls = new Array();
                     var diceTotal = 0;
+
+                    if(!(
+                        diceLog[1] != null &&
+                        diceLog[2] != null &&
+                        Number(diceLog[1]) &&
+                        Number(diceLog[2])
+                    )) {
+                        message.channel.send("You need to use numbers for this command to work.")
+                    }
+
                     if(diceLog[1] > 50) {
                         message.channel.send("I don't have that many dice.");
                         break;
@@ -256,9 +270,12 @@ bot.on('message', (message) => {
                             console.log("ANS: " + ans);
                             message.channel.send(/*'Hail 2 U! Your answer is: ' + */ans);
                         }
-                        break;
                     }
-                }
+                    break;
+            }
+            break;
+        default:
+            break;
     }
 });
 
@@ -338,13 +355,6 @@ const twitchRun = async function twitchRun() {
     streamGetter("ehckgaming");
 }
 
-
-/*Twitter
-
-*/
-async function warioPass(str) {
-}
-
 /*Twitter
     Send a given tweet to the given channel
 */
@@ -355,7 +365,7 @@ async function sendTweet(tweet, chan) {
         'Epic Games Store', 'EGS', 'Playstation', 'PSN',
         'Amazon', 'Gamestop', 'PS5', 'PS4', 'GOG',
         'for a chance to win', 'Switch', 'eShop',
-        'XSX', 'XBO'];
+        'XSX', 'XBO', 'amiibo'];
         var i;
         for(i = 0; i < keys.length; i++) {
             if(tweet.text.toLowerCase().includes(keys[i].toLowerCase())) {
@@ -453,7 +463,7 @@ bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
     testChannel = bot.channels.cache.get(testID);
     warioChannel = bot.channels.cache.get(namWarioID);
-    console.log('JUDGEMENT v1.10.0');
+    console.log('JUDGEMENT v1.10.1');
     setInterval(twitchRun,120000); //Twitch run timer: 2 minutes
     runTweets();
 });
