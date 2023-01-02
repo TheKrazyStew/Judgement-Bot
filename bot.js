@@ -352,20 +352,20 @@ const twitchRun = async function twitchRun() {
     streamGetter("TheKrazyStew");
     streamGetter("Namtaskic");
     //streamGetter("");
-    streamGetter("ehckgaming");
+    //streamGetter("ehckgaming");
 }
 
 /*Twitter
     Send a given tweet to the given channel
 */
 async function sendTweet(tweet, chan) {
-    var url = "https://twitter.com/i/status/" + tweet.id;
     try{
+        var url = "https://twitter.com/i/status/" + tweet.id;
         var keys = ['Nintendo', 'NSW', 'Xbox', 'XBL', 'Steam',
         'Epic Games Store', 'EGS', 'Playstation', 'PSN',
         'Amazon', 'Gamestop', 'PS5', 'PS4', 'GOG',
         'for a chance to win', 'Switch', 'eShop',
-        'XSX', 'XBO', 'amiibo'];
+        'XSX', 'XBO', 'amiibo', 'Humble'];
         var i;
         for(i = 0; i < keys.length; i++) {
             if(tweet.text.toLowerCase().includes(keys[i].toLowerCase())) {
@@ -463,7 +463,7 @@ bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
     testChannel = bot.channels.cache.get(testID);
     warioChannel = bot.channels.cache.get(namWarioID);
-    console.log('JUDGEMENT v1.10.1');
+    console.log('JUDGEMENT v1.10.2');
     setInterval(twitchRun,120000); //Twitch run timer: 2 minutes
     runTweets();
 });

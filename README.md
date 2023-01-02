@@ -103,6 +103,15 @@
 
 - Prettied up the code in needed areas.
 
-- Added amiibo to the Wario tweet filter list.
+- Added 'amiibo' to the Wario tweet filter list.
 
 - Added catch for Judgement rarely crashing trying to generate an easter egg response for some messages.
+
+## v1.10.2
+**Publish date: January 2nd, 2023**
+
+- Added 'humble' to the Wario tweet filter list.
+
+- Removed 'ehckgaming' from the Twitch streamer list as the channel no longer exists.
+
+- Invalid tweet IDs no longer crash Judgement.
