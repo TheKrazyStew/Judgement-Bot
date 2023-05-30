@@ -115,3 +115,8 @@
 - Removed 'ehckgaming' from the Twitch streamer list as the channel no longer exists.
 
 - Invalid tweet IDs no longer crash Judgement.
+
+## v1.10.3
+**Publish date: May 30th, 2023**
+
+- Judgement's logs are now prefixed with a timestamp.

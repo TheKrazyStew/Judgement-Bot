@@ -13,6 +13,7 @@ const Twit = require('twitter-v2');
 const api = require("twitter-api-sdk");
 const needle = require('needle');
 const {keys} = require("./discord-keys.js");
+const moment = require('moment');
 
 
 const bot = new Discord.Client();
@@ -92,6 +93,15 @@ var namWarioID = keys.namTwitterChannel;
 var testID = keys.botTestChannel;
 
 /*** Functions ***/
+
+/*Judgement
+    Prefixes messages in log
+    with the current time
+*/
+function log(msg) {
+    var time = moment().format('hh:mm:ss');
+    console.log("[" + time + "] " + msg);
+}
 
 /*Discord
     Automatic procedure for Judgement
@@ -210,7 +220,7 @@ bot.on('message', (message) => {
         }
     }
     } catch (e) {
-        console.log("Error finding easter eggs for message: " + message.content);
+        log("Error finding easter eggs for message: " + message.content);
     }
 
 //Commands
@@ -224,7 +234,7 @@ bot.on('message', (message) => {
                     var diceLog = message.content.split(" ")
                     .join("d")
                     .split("d");
-                    console.log(diceLog);
+                    log(diceLog);
                     var i;
                     var rolls = new Array();
                     var diceTotal = 0;
@@ -255,19 +265,19 @@ bot.on('message', (message) => {
                     //Ignore message if the second character in the message is also '~'
                     //Two ~s in a row is used for strikethrough text by Discord
                     if (message.content.substring(1, 2) != '~') { 
-                        console.log('8-ball triggered by ' + username);
+                        log('8-ball triggered by ' + username);
 
                         //5% chance Judgement will become DIO instead of answering the question
                         var dioRNG = Math.floor(Math.random() * 100);
-                        console.log('DIO RNG: ' + dioRNG);
+                        log('DIO RNG: ' + dioRNG);
                         if (dioRNG < 5) { 
-                            console.log("DIO Activated!");
+                            log("DIO Activated!");
                             message.channel.send('You thought you would get an answer, but it was me, DIO!');
 
                         //Otherwise, make a response
                         } else { 
                             var ans = randFromList(answerBank);
-                            console.log("ANS: " + ans);
+                            log("ANS: " + ans);
                             message.channel.send(/*'Hail 2 U! Your answer is: ' + */ans);
                         }
                     }
@@ -317,7 +327,7 @@ async function streamGetter(name) {
             i = 3;
             break;
         default:
-            console.log(name + " not a valid streamer");
+            log(name + " not a valid streamer");
             return;
     }
 
@@ -330,18 +340,18 @@ async function streamGetter(name) {
                     if(!isLive[i] || isLive[i] === undefined) {
                         isLive[i] = true;
                         annChannel.send("Hey, @everyone! " + nick + " is streaming now! Check it out at https://twitch.tv/" + name);
-                        console.log('new stream detected from ' + nick);
+                        log('new stream detected from ' + nick);
                     }
                 }
             } else {
                 if(isLive[i]) {
                     isLive[i] = false;
-                    console.log(nick + ' is no longer live');
+                    log(nick + ' is no longer live');
                 }
             }
         });
     } catch(e) {
-        console.log("Error obtaining stream data for " + name + ". Will try again later");
+        log("Error obtaining stream data for " + name + ". Will try again later");
     }
 }
 
@@ -374,7 +384,7 @@ async function sendTweet(tweet, chan) {
             }
         }
     } catch (e) {
-        console.log("Error posting about tweet");
+        log("Error posting about tweet");
         console.error(e);
     }
 }
@@ -389,11 +399,11 @@ async function twitConnect(streamFactory, dataConsumer) {
             dataConsumer(data);
         }
         //Disconnected by Twitter
-        console.log("Disconnected by Twitter. Retrying...");
+        log("Disconnected by Twitter. Retrying...");
         twitConnect(streamFactory, dataConsumer);
     } catch (e) {
         //Disconnected by error
-        console.log("An error occurred fetching tweets. Retrying...");
+        log("An error occurred fetching tweets. Retrying...");
         twitConnect(streamFactory, dataConsumer);
     }
 }
@@ -418,7 +428,7 @@ async function runTweets() {
             'authorization': `Bearer ${keys.twitterBearerToken}`
         }
     });
-    console.log(response.body);
+    log(response.body);
     rules1 = response.body;
     //Delete current rules
     const ids = rules1.data.map(rule => rule.id);
@@ -442,9 +452,9 @@ async function runTweets() {
             ]
         }
         const r = await T.post("tweets/search/stream/rules", rules);
-        console.log(r);
+        log(r);
     } catch (e) {
-        console.log(e);
+        log(e);
     }
 
     twitConnect(
@@ -463,7 +473,7 @@ bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
     testChannel = bot.channels.cache.get(testID);
     warioChannel = bot.channels.cache.get(namWarioID);
-    console.log('JUDGEMENT v1.10.2');
+    log('JUDGEMENT v1.10.3');
     setInterval(twitchRun,120000); //Twitch run timer: 2 minutes
     runTweets();
 });
