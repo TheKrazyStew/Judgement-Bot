@@ -9,9 +9,6 @@
 
 const Discord = require("discord.js");
 const TwitchAPI = require("node-twitch").default;
-const Twit = require('twitter-v2');
-const api = require("twitter-api-sdk");
-const needle = require('needle');
 const {keys} = require("./discord-keys.js");
 const moment = require('moment');
 
@@ -23,18 +20,6 @@ const twitch = new TwitchAPI({
     client_id: keys.twitchID,
     client_secret: keys.twitchSecret,
 });
-
-//Twitter API Integration
-const T = new Twit({
-
-    /*consumer_key: keys.twitterAPIKey,
-    consumer_secret: keys.twitterAPISecret,
-    access_token_key: keys.twitterAccessToken,
-    access_token_secret: keys.twitterAccessSecret,*/
-    bearer_token: keys.twitterBearerToken,
-
-});
-const cli = new api.Client(keys.twitterBearerToken);
 
 /*** Variables ***/
 
@@ -89,8 +74,8 @@ var isLive =
     testChannel - should be unused
 */
 var namTwitchID = keys.namTwitchChannel;
-var namWarioID = keys.namTwitterChannel;
 var testID = keys.botTestChannel;
+var namServer = keys.namServer;
 
 /*** Functions ***/
 
@@ -141,7 +126,8 @@ bot.on('message', (message) => {
             }
         } if (list[i].includes("nam") ||
             list[i].includes("namtaskic")) {
-            if (!lcase.includes(":")) { //excludes emotes with either word in their names
+            if (!lcase.includes(":") && //excludes emotes with either word in their names
+            message.guild.id == namServer) { //This easter egg only applies to Namtaskic-Land
                 message.channel.send("Ah yes, Nam... my favorite server overlord.");
             }
 
@@ -295,6 +281,7 @@ bot.on('message', (message) => {
 function roll(sides) {
     return Math.ceil(Math.random() * sides);
 }
+
 /*Discord
     Returns a randomly selected element
     from the inputted list
@@ -365,104 +352,6 @@ const twitchRun = async function twitchRun() {
     //streamGetter("ehckgaming");
 }
 
-/*Twitter
-    Send a given tweet to the given channel
-*/
-async function sendTweet(tweet, chan) {
-    try{
-        var url = "https://twitter.com/i/status/" + tweet.id;
-        var keys = ['Nintendo', 'NSW', 'Xbox', 'XBL', 'Steam',
-        'Epic Games Store', 'EGS', 'Playstation', 'PSN',
-        'Amazon', 'Gamestop', 'PS5', 'PS4', 'GOG',
-        'for a chance to win', 'Switch', 'eShop',
-        'XSX', 'XBO', 'amiibo', 'Humble'];
-        var i;
-        for(i = 0; i < keys.length; i++) {
-            if(tweet.text.toLowerCase().includes(keys[i].toLowerCase())) {
-                chan.send(url);
-                return 0;
-            }
-        }
-    } catch (e) {
-        log("Error posting about tweet");
-        console.error(e);
-    }
-}
-
-/*Twitter
-    Reconnect to the Twitter stream
-    if it accidentally disconnects
-*/
-async function twitConnect(streamFactory, dataConsumer) {
-    try {
-        for await(const {data} of streamFactory()) {
-            dataConsumer(data);
-        }
-        //Disconnected by Twitter
-        log("Disconnected by Twitter. Retrying...");
-        twitConnect(streamFactory, dataConsumer);
-    } catch (e) {
-        //Disconnected by error
-        log("An error occurred fetching tweets. Retrying...");
-        twitConnect(streamFactory, dataConsumer);
-    }
-}
-
-/*Twitter
-    Setting up tweet stream; will find and post any tweets fitting established rules
-*   WARIO64 RULES:
-        - from Wario64
-        - tweet includes at least one of many key words/phrases defined below
-*/
-async function runTweets() {
-    const endpoints = {
-        'tweet.fields': ['author_id', 'conversation_id'],
-        'expansions': ['author_id', 'referenced_tweets.id'],
-        'media.fields': ['url'],
-    }
-
-    //Get current rules
-    const rulesURL = 'https://api.twitter.com/2/tweets/search/stream/rules';
-    var response = await needle('get', rulesURL, {
-        headers: {
-            'authorization': `Bearer ${keys.twitterBearerToken}`
-        }
-    });
-    log(response.body);
-    rules1 = response.body;
-    //Delete current rules
-    const ids = rules1.data.map(rule => rule.id);
-    const data = {
-        "delete": {
-            "ids": ids
-        }
-    }
-    response = await needle('post', rulesURL, data, {
-        headers: {
-            'content-type': 'application/json',
-            'authorization': `Bearer ${keys.twitterBearerToken}`
-        }
-    });
-
-    try {
-        const rules = {
-            'add': [
-                //{'value': "from:TheKrazyStew", "tag":"from tks"},
-                {'value': "from:Wario64", "tag":"from wario"}
-            ]
-        }
-        const r = await T.post("tweets/search/stream/rules", rules);
-        log(r);
-    } catch (e) {
-        log(e);
-    }
-
-    twitConnect(
-        () => T.stream('tweets/search/stream', endpoints),
-        (data) => sendTweet (data, warioChannel),
-    );
-}
-
 /*** Startup ***/
 
 //Log in the bot
@@ -472,8 +361,6 @@ bot.login(keys.discordToken);
 bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
     testChannel = bot.channels.cache.get(testID);
-    warioChannel = bot.channels.cache.get(namWarioID);
-    log('JUDGEMENT v1.10.3');
+    log('JUDGEMENT v1.11.0');
     setInterval(twitchRun,120000); //Twitch run timer: 2 minutes
-    runTweets();
 });

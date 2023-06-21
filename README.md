@@ -120,3 +120,9 @@
 **Publish date: May 30th, 2023**
 
 - Judgement's logs are now prefixed with a timestamp.
+
+## v1.11.0
+**Publish date: June 20th, 2023**
+
+- Due to changes in Twitter API policy, Judgement no longer has access to tweets. Now unused code has been removed.
+- Added a check for the "nam" easter egg to only alert in the Namtaskic-Land server.
