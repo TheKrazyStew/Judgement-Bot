@@ -5,17 +5,40 @@
  * 
  */
 
-//Imports
+/*** Imports ***/
 
-const Discord = require("discord.js");
+const {Client, GatewayIntentBits} = require('discord.js');
 const TwitchAPI = require("node-twitch").default;
 const {keys} = require("./discord-keys.js");
 const moment = require('moment');
 
+/*** API Integration ***/
 
-const bot = new Discord.Client();
+//Discord
+const bot = new Client({intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildModeration,
+    GatewayIntentBits.GuildEmojisAndStickers,
+    GatewayIntentBits.GuildIntegrations,
+    GatewayIntentBits.GuildWebhooks,
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.DirectMessageReactions,
+    GatewayIntentBits.DirectMessageTyping,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildScheduledEvents,
+    GatewayIntentBits.AutoModerationConfiguration,
+    GatewayIntentBits.AutoModerationExecution
+],
+});
 
-//Twitch API Integration
+//Twitch
 const twitch = new TwitchAPI({
     client_id: keys.twitchID,
     client_secret: keys.twitchSecret,
@@ -60,6 +83,24 @@ var basedBank = [
     "On indisputable evidence?"
 ];
 
+var chaosBank = [
+    "We're here to kill Chaos.",
+    "I only know one thing: I want to kill chaos. I need to. It's not a hope, or a dream. It's like a hunger, a thirst.",
+    "I'm here to kill Chaos. That's my mission.",
+    "My mission is to kill Chaos. That's all I know.",
+    "When are we going to fight Chaos?",
+    "All I care about is seeing Chaos dead.",
+    "Looks like Chaos has been waiting for us.",
+    "What about Chaos?",
+    "Is it true you made a deal with Chaos?",
+    "Chaos exists. I knew it. I told you.",
+    "Where there's a crystal, there's Chaos. Come on.",
+    "Are you Chaos?",
+    "Where... where did this desperate urge to eradicate Chaos come from?",
+    "The city is choked with terror and fear. When that mixes with darkness, chaos takes hold.",
+    "So it all leads here. The Shrine of Chaos."
+];
+
 /* Booleans used by the Twitch function
     [tksIsLive, namIsLive, [unused], ehckIsLive]
 */
@@ -79,21 +120,12 @@ var namServer = keys.namServer;
 
 /*** Functions ***/
 
-/*Judgement
-    Prefixes messages in log
-    with the current time
-*/
-function log(msg) {
-    var time = moment().format('hh:mm:ss');
-    console.log("[" + time + "] " + msg);
-}
-
 /*Discord
     Automatic procedure for Judgement
     to respond to messages within
     discord servers he is in
 */
-bot.on('message', (message) => {
+bot.on('messageCreate', (message) => {
     //Recording username for easier logging
     var username = "" +
         message.member.user.tag +
@@ -118,27 +150,27 @@ bot.on('message', (message) => {
     for (var i = 0; i < list.length; i++) {
         if (list[i].includes("judgement")) {
             if (lcase.includes("thanks" || lcase.includes("thank"))) {
-                message.channel.send("You're welcome.");
+                message.channel.send({content: "You're welcome."});
             } else if(lcase.includes("based")){
-                message.channel.send("Based on what? " + randFromList(basedBank));
+                message.channel.send({content: "Based on what? " + randFromList(basedBank)});
             } else {
-                message.channel.send("You rang?");
+                message.channel.send({content: "You rang?"});
             }
         } if (list[i].includes("nam") ||
             list[i].includes("namtaskic")) {
             if (!lcase.includes(":") && //excludes emotes with either word in their names
             message.guild.id == namServer) { //This easter egg only applies to Namtaskic-Land
-                message.channel.send("Ah yes, Nam... my favorite server overlord.");
+                message.channel.send({content: "Ah yes, Nam... my favorite server overlord."});
             }
 
         } if (list[i].includes("turtle")) {
-            message.channel.send("hoi tortal");
+            message.channel.send({content: "hoi tortal"});
 
         } if (list[i].includes("salmon")) {
-            message.channel.send("more like... salmon in a bucket");
+            message.channel.send({content: "more like... salmon in a bucket"});
 
         } if (list[i].includes("power")) {
-            message.channel.send("UNLIMITED POWER!!");
+            message.channel.send({content: "UNLIMITED POWER!!"});
 
         } if (list[i].includes("vergil")) {
             var vergilBank = [
@@ -159,10 +191,10 @@ bot.on('message', (message) => {
                 "Unfortunately, our souls are at odds, " + trigName + ". I need more power!"
             ];
 
-            message.channel.send(randFromList(vergilBank));
+            message.channel.send({content: randFromList(vergilBank)});
 
         } if (list[i].includes("knack")) {
-            message.channel.send("Still waiting for Knack 3, Sony... make it happen.");
+            message.channel.send({content: "Still waiting for Knack 3, Sony... make it happen."});
 
         } if (list[i].includes("kingdom") &&
             list[i+1].includes("hearts")) {
@@ -179,13 +211,13 @@ bot.on('message', (message) => {
                 "Aww... I don't understand what's going on..."
             ];
 
-            message.channel.send(randFromList(heartsBank));
+            message.channel.send({content: randFromList(heartsBank)});
 
         } if (list[i].includes("door") &&
             list[i+1].includes("to") &&
             list[i+2].includes("darkness") ) {
 
-            message.channel.send("Say, fellas, did somebody mention the Door to Darkness?");
+            message.channel.send({content: "Say, fellas, did somebody mention the Door to Darkness?"});
 
         } if (list[i].includes("zero") ) {
 
@@ -196,13 +228,15 @@ bot.on('message', (message) => {
                 "Nooo!! This isn't happening!! There's no reason for me to go on! What... What am I fighting for?!"
             ];
 
-            message.channel.send(randFromList(zeroBank));
+            message.channel.send({content: randFromList(zeroBank)});
 
         } if (list[i].includes("mf") &&
             list[i+1].includes("doom")) {
 
-            message.channel.send("MF DOOM");
+            message.channel.send({content: "MF DOOM"});
 
+        } if (list[i].includes("chaos")) {
+            message.channel.send({content: randFromList(chaosBank)});
         }
     }
     } catch (e) {
@@ -275,6 +309,20 @@ bot.on('message', (message) => {
     }
 });
 
+bot.on('threadCreate', (thread) => {
+    thread.join();
+    log(`joined new thread ${thread.name}`);
+});
+
+/*Discord
+    Prefixes messages in log
+    with the current time
+*/
+function log(msg) {
+    var time = moment().format('hh:mm:ss');
+    console.log("[" + time + "] " + msg);
+}
+
 /*Discord
     Rolling dice
 */
@@ -288,6 +336,21 @@ function roll(sides) {
 */
 function randFromList(list) {
     return list[Math.floor(Math.random() * list.length)];
+}
+
+/*Discord
+    Searches for available threads and joins them
+    "Available" threads are open and public
+*/
+function searchForThreads() {
+    let threads = bot.channels.cache.filter(x => x.isThread());
+    log("search started");
+    for(var thread of threads) {
+        //var thread = threads[i];
+        thread[1].join();
+        log(`joined thread ${thread[1].name}`);
+    }
+    log("search finished");
 }
 
 /*Twitch
@@ -326,7 +389,7 @@ async function streamGetter(name) {
                 if(r.type === "live") {
                     if(!isLive[i] || isLive[i] === undefined) {
                         isLive[i] = true;
-                        annChannel.send("Hey, @everyone! " + nick + " is streaming now! Check it out at https://twitch.tv/" + name);
+                        annChannel.send({content: "Hey, @everyone! " + nick + " is streaming now! Check it out at https://twitch.tv/" + name});
                         log('new stream detected from ' + nick);
                     }
                 }
@@ -361,6 +424,11 @@ bot.login(keys.discordToken);
 bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
     testChannel = bot.channels.cache.get(testID);
-    log('JUDGEMENT v1.11.0');
-    setInterval(twitchRun,120000); //Twitch run timer: 2 minutes
+    log('JUDGEMENT v1.12.0');
+
+    //Twitch run timer: 2 minutes
+    setInterval(twitchRun,120000);
+
+    //Join any threads that may have popped up while shut down
+    searchForThreads();
 });

@@ -127,3 +127,12 @@
 - Due to changes in Twitter API policy, Judgement no longer has access to tweets. Now unused code has been removed.
 
 - Added a check for the "nam" easter egg to only alert in the Namtaskic-Land server.
+
+## v1.12.0
+**Publish date: June 30th, 2023**
+
+- Added a new trigger word: chaos
+
+- Judgement can now join threads.
+
+- Updated the Discord API. I'll figure out which permissions I actually need later
