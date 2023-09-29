@@ -136,3 +136,8 @@
 - Judgement can now join threads.
 
 - Updated the Discord API. I'll figure out which permissions I actually need later
+
+## v1.12.1
+**Publish Date: September 28th, 2023**
+
+- "Nam" trigger is no longer affected by the word "name".

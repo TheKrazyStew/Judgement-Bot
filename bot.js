@@ -147,98 +147,100 @@ bot.on('messageCreate', (message) => {
 
     //Easter Eggs
     try {
-    for (var i = 0; i < list.length; i++) {
-        if (list[i].includes("judgement")) {
-            if (lcase.includes("thanks" || lcase.includes("thank"))) {
-                message.channel.send({content: "You're welcome."});
-            } else if(lcase.includes("based")){
-                message.channel.send({content: "Based on what? " + randFromList(basedBank)});
-            } else {
-                message.channel.send({content: "You rang?"});
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].includes("judgement")) {
+                if (lcase.includes("thanks" || lcase.includes("thank"))) {
+                    message.channel.send({content: "You're welcome."});
+                } else if(lcase.includes("based")){
+                    message.channel.send({content: "Based on what? " + randFromList(basedBank)});
+                } else {
+                    message.channel.send({content: "You rang?"});
+                }
+            } if (
+                    (list[i].includes("nam") && !list[i].includes("name")) ||
+                    list[i].includes("namtaskic")
+                ) {
+                if (!lcase.includes(":") && //excludes emotes with either word in their names
+                message.guild.id == namServer) { //This easter egg only applies to Namtaskic-Land
+                    message.channel.send({content: "Ah yes, Nam... my favorite server overlord."});
+                }
+
+            } if (list[i].includes("turtle")) {
+                message.channel.send({content: "hoi tortal"});
+
+            } if (list[i].includes("salmon")) {
+                message.channel.send({content: "more like... salmon in a bucket"});
+
+            } if (list[i].includes("power")) {
+                message.channel.send({content: "UNLIMITED POWER!!"});
+
+            } if (list[i].includes("vergil")) {
+                var vergilBank = [
+                    "nam ples play dee em see too",
+                    "I need more power...",
+                    "Might controls everything.",
+                    "Why isn't this working? Is there something missing? Must more blood be shed?", 
+                    "Insane buffoon! I don't know where you came from but you don't belong here. Now leave!",
+                    "I've come to retrieve my power. You can't handle it.", 
+                    "Where's your motivation?",
+                    "You are not worthy as my opponent!",
+                    "Your nightmare begins here.",
+                    "Let's have some fun.",
+                    "My power shall be absolute!",
+                    "I won't lose to the likes of you... " + trigName + ".",
+                    "Foolishness....is rushing in blind all you can do?",
+                    "Admit it, " + trigName + ". I'm just better than you.",
+                    "Unfortunately, our souls are at odds, " + trigName + ". I need more power!"
+                ];
+
+                message.channel.send({content: randFromList(vergilBank)});
+
+            } if (list[i].includes("knack")) {
+                message.channel.send({content: "Still waiting for Knack 3, Sony... make it happen."});
+
+            } if (list[i].includes("kingdom") &&
+                list[i+1].includes("hearts")) {
+                var heartsBank = [
+                    trigName + "! It's Sephiroth!",
+                    "That was undeniable proof that we totally owned you lamers.",
+                    "They'll pay for this.",
+                    "Ohh, NOW I've got it! *&&X% means \"heart.\"",
+                    trigName + "... who else will I have ice cream with?",
+                    "Mickey! It's " + trigName + ". They put bugs in them!",
+                    "I'm looking for somebody. Have any of you seen a guy with spiky hair?",
+                    "GET UP ON THE HYDRA'S BACK!",
+                    "Ah ha ha ha ha ha ha ha ha... Ha ha ha ha ha... I'm a fool.",
+                    "Aww... I don't understand what's going on..."
+                ];
+
+                message.channel.send({content: randFromList(heartsBank)});
+
+            } if (list[i].includes("door") &&
+                list[i+1].includes("to") &&
+                list[i+2].includes("darkness") ) {
+
+                message.channel.send({content: "Say, fellas, did somebody mention the Door to Darkness?"});
+
+            } if (list[i].includes("zero") ) {
+
+                var zeroBank = [
+                    "If the Sky Lagoon falls it will be disastrous! There's no time... I'm going down!",
+                    trigName + ", I have a question for you. ... Did your unit attack this place?",
+                    "This is a matter of personal pride now. There's no avoiding this... I must go.",
+                    "Nooo!! This isn't happening!! There's no reason for me to go on! What... What am I fighting for?!"
+                ];
+
+                message.channel.send({content: randFromList(zeroBank)});
+
+            } if (list[i].includes("mf") &&
+                list[i+1].includes("doom")) {
+
+                message.channel.send({content: "MF DOOM"});
+
+            } if (list[i].includes("chaos")) {
+                message.channel.send({content: randFromList(chaosBank)});
             }
-        } if (list[i].includes("nam") ||
-            list[i].includes("namtaskic")) {
-            if (!lcase.includes(":") && //excludes emotes with either word in their names
-            message.guild.id == namServer) { //This easter egg only applies to Namtaskic-Land
-                message.channel.send({content: "Ah yes, Nam... my favorite server overlord."});
-            }
-
-        } if (list[i].includes("turtle")) {
-            message.channel.send({content: "hoi tortal"});
-
-        } if (list[i].includes("salmon")) {
-            message.channel.send({content: "more like... salmon in a bucket"});
-
-        } if (list[i].includes("power")) {
-            message.channel.send({content: "UNLIMITED POWER!!"});
-
-        } if (list[i].includes("vergil")) {
-            var vergilBank = [
-                "nam ples play dee em see too",
-                "I need more power...",
-                "Might controls everything.",
-                "Why isn't this working? Is there something missing? Must more blood be shed?", 
-                "Insane buffoon! I don't know where you came from but you don't belong here. Now leave!",
-                "I've come to retrieve my power. You can't handle it.", 
-                "Where's your motivation?",
-                "You are not worthy as my opponent!",
-                "Your nightmare begins here.",
-                "Let's have some fun.",
-                "My power shall be absolute!",
-                "I won't lose to the likes of you... " + trigName + ".",
-                "Foolishness....is rushing in blind all you can do?",
-                "Admit it, " + trigName + ". I'm just better than you.",
-                "Unfortunately, our souls are at odds, " + trigName + ". I need more power!"
-            ];
-
-            message.channel.send({content: randFromList(vergilBank)});
-
-        } if (list[i].includes("knack")) {
-            message.channel.send({content: "Still waiting for Knack 3, Sony... make it happen."});
-
-        } if (list[i].includes("kingdom") &&
-            list[i+1].includes("hearts")) {
-            var heartsBank = [
-                trigName + "! It's Sephiroth!",
-                "That was undeniable proof that we totally owned you lamers.",
-                "They'll pay for this.",
-                "Ohh, NOW I've got it! *&&X% means \"heart.\"",
-                trigName + "... who else will I have ice cream with?",
-                "Mickey! It's " + trigName + ". They put bugs in them!",
-                "I'm looking for somebody. Have any of you seen a guy with spiky hair?",
-                "GET UP ON THE HYDRA'S BACK!",
-                "Ah ha ha ha ha ha ha ha ha... Ha ha ha ha ha... I'm a fool.",
-                "Aww... I don't understand what's going on..."
-            ];
-
-            message.channel.send({content: randFromList(heartsBank)});
-
-        } if (list[i].includes("door") &&
-            list[i+1].includes("to") &&
-            list[i+2].includes("darkness") ) {
-
-            message.channel.send({content: "Say, fellas, did somebody mention the Door to Darkness?"});
-
-        } if (list[i].includes("zero") ) {
-
-            var zeroBank = [
-                "If the Sky Lagoon falls it will be disastrous! There's no time... I'm going down!",
-                trigName + ", I have a question for you. ... Did your unit attack this place?",
-                "This is a matter of personal pride now. There's no avoiding this... I must go.",
-                "Nooo!! This isn't happening!! There's no reason for me to go on! What... What am I fighting for?!"
-            ];
-
-            message.channel.send({content: randFromList(zeroBank)});
-
-        } if (list[i].includes("mf") &&
-            list[i+1].includes("doom")) {
-
-            message.channel.send({content: "MF DOOM"});
-
-        } if (list[i].includes("chaos")) {
-            message.channel.send({content: randFromList(chaosBank)});
         }
-    }
     } catch (e) {
         log("Error finding easter eggs for message: " + message.content);
     }
@@ -424,7 +426,7 @@ bot.login(keys.discordToken);
 bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
     testChannel = bot.channels.cache.get(testID);
-    log('JUDGEMENT v1.12.0');
+    log('JUDGEMENT v1.12.1');
 
     //Twitch run timer: 2 minutes
     setInterval(twitchRun,120000);
