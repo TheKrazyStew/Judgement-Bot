@@ -157,7 +157,7 @@ bot.on('messageCreate', (message) => {
                     message.channel.send({content: "You rang?"});
                 }
             } if (
-                    (list[i].includes("nam") && !list[i].includes("name")) ||
+                    (list[i] == ("nam")) ||
                     list[i].includes("namtaskic")
                 ) {
                 if (!lcase.includes(":") && //excludes emotes with either word in their names
