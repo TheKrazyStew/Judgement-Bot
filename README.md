@@ -141,3 +141,8 @@
 **Publish Date: September 28th, 2023**
 
 - "Nam" trigger is no longer affected by the word "name".
+
+## v1.12.2
+**Publish Date: September 28th, 2023**
+
+- As per request by the owner of Judgement, he is now much more quiet in the StewCraft Discord server.
