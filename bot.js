@@ -101,6 +101,11 @@ var chaosBank = [
     "So it all leads here. The Shrine of Chaos."
 ];
 
+var eggBank = [
+    'You thought you would get an answer, but it was me, DIO!',
+    "Gongaga.",
+];
+
 /* Booleans used by the Twitch function
     [tksIsLive, namIsLive, [unused], ehckIsLive]
 */
@@ -298,7 +303,7 @@ bot.on('messageCreate', (message) => {
                         log('DIO RNG: ' + dioRNG);
                         if (dioRNG < 5) { 
                             log("DIO Activated!");
-                            message.channel.send('You thought you would get an answer, but it was me, DIO!');
+                            message.channel.send(randFromList(eggBank));
 
                         //Otherwise, make a response
                         } else { 
@@ -430,7 +435,7 @@ bot.login(keys.discordToken);
 bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
     testChannel = bot.channels.cache.get(testID);
-    log('JUDGEMENT v1.12.2');
+    log('JUDGEMENT v1.12.3');
 
     //Twitch run timer: 2 minutes
     setInterval(twitchRun,120000);

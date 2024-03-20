@@ -143,6 +143,11 @@
 - "Nam" trigger is no longer affected by the word "name".
 
 ## v1.12.2
-**Publish Date: September 28th, 2023**
+**Publish Date: March 16th, 2024**
 
 - As per request by the owner of Judgement, he is now much more quiet in the StewCraft Discord server.
+
+## v1.12.3
+**Publish date: March 19th, 2024**
+
+- Added compatibility for multiple easter egg responses to questions, and added a new one.
