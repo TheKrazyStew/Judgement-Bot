@@ -151,3 +151,7 @@
 **Publish date: March 19th, 2024**
 
 - Added compatibility for multiple easter egg responses to questions, and added a new one.
+
+## v1.12.4
+**Publish date: April 16th, 2024**
+- Added a new channel to ping if TKS begins streams.

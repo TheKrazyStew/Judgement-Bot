@@ -121,6 +121,7 @@ var isLive =
 */
 var namTwitchID = keys.namTwitchChannel;
 var testID = keys.botTestChannel;
+var scTwitchID = keys.scTwitchChannel;
 var namServer = keys.namServer;
 var stewServer = keys.stewServer;
 
@@ -402,6 +403,9 @@ async function streamGetter(name) {
                         isLive[i] = true;
                         annChannel.send({content: "Hey, @everyone! " + nick + " is streaming now! Check it out at https://twitch.tv/" + name});
                         log('new stream detected from ' + nick);
+                        if(nick == "TKS") {
+                            scStreamChannel.send({content: "A new stream is starting, <@&1220479613101408447>! Check it out at https://twitch.tv/" + name});
+                        }
                     }
                 }
             } else {
@@ -434,8 +438,9 @@ bot.login(keys.discordToken);
 //Bot is ready
 bot.on('ready', () => {
     annChannel = bot.channels.cache.get(namTwitchID);
+    scStreamChannel = bot.channels.cache.get(scTwitchID);
     testChannel = bot.channels.cache.get(testID);
-    log('JUDGEMENT v1.12.3');
+    log('JUDGEMENT v1.12.4');
 
     //Twitch run timer: 2 minutes
     setInterval(twitchRun,120000);
